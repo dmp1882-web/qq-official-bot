@@ -39,6 +39,20 @@ python3 bot.py
 在 QQ 开放平台把机器人拉进群、开通群聊权限即可使用；指令面板可用平台接口
 `PUT https://api.sgroup.qq.com/v2/panels/<panel_id>` 维护（scope=group，条目说明文字有长度限制，别写太长）。
 
+### 长期运行（systemd，可选）
+
+仓库附了服务文件示例 `qq-official-bot.service.example`：把里面的项目路径改成你的实际目录后，
+
+```bash
+sudo cp qq-official-bot.service.example /etc/systemd/system/qq-official-bot.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now qq-official-bot
+journalctl -u qq-official-bot -f   # 看实时日志
+```
+
+示例里已配 `Restart=always`：机器人启动时偶尔会撞上 QQ 平台 token 接口超时而退出，
+交给 systemd 自动拉起即可，不用守着手动重启。
+
 ## 可选功能说明
 
 - **点赞**：依赖 [NapCat](https://napcat.icu) 的 OneBot HTTP API。配置 `NAPCAT_API` 与 `NAPCAT_TOKEN` 后可用；未配置时点赞命令会报错但不影响其他功能。用户需先发送「绑定 <QQ号>」把群 OpenID 与 QQ 号对应起来（映射存本地 `openid_qq_map.json`，已 gitignore）。

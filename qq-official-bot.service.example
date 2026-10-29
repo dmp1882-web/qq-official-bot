@@ -1,0 +1,25 @@
+# qq-official-bot systemd 服务文件示例
+# 用法：把下面两处路径改成你的实际项目目录，然后：
+#   sudo cp qq-official-bot.service.example /etc/systemd/system/qq-official-bot.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now qq-official-bot
+#   journalctl -u qq-official-bot -f   # 看实时日志
+
+[Unit]
+Description=QQ Official Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# 改成你的项目目录
+WorkingDirectory=/opt/qq-official-bot
+# 可选：密钥用环境变量方式提供时，取消下一行注释（文件内容按 .env.example 填）
+# EnvironmentFile=/opt/qq-official-bot/.env
+ExecStart=/usr/bin/python3 /opt/qq-official-bot/bot.py
+# 机器人启动时偶尔会撞上 QQ 平台 token 接口超时而退出，靠自动重启兜底
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
